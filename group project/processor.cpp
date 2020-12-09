@@ -2,15 +2,15 @@
 #include "processor.h"
 
 
-
-void Processor::add(jobList j, int cpu_num, int currentTime)
+void Processor::add(jobList j, int cpu_num, int currentTime, ofstream& logFile)
 {
     if (jobCount == 0) {
         currentJob = j;
         jobCount++;
         (*this).idleTime = 0;
-        cout << "\nTime " << currentTime << ":  Arrival: Overall Job : " << j.jobNumber << " Job " << j.jobType << " : " << j.jobTypeNumber << " Processing Time " << j.processingTime;
-
+        (*this).runTime = 0;
+        active = true;
+        logFile <<  "\nTime " << currentTime << ":- Begin Processing Job : " << j.jobNumber << " Job " << j.jobType << " : " << j.jobTypeNumber << " in CPU " << cpu_num + 1;
     }
 }
 
@@ -27,6 +27,7 @@ bool Processor::isEmpty()
 bool Processor::isComplete()
 {
     if (currentJob.processingTime == 0) {
+
         (*this).remove();
         return true;
     }
@@ -35,36 +36,21 @@ bool Processor::isComplete()
     }
 }
 
-void Processor::processJob(jobList j, int cpu_num, int currentTime) {
-    if ((*this).runTime == 0 && j.waitTime >= 0) {
-        cout << "\nTime " << currentTime << ":- Begin Processing Job : " << j.jobNumber << " Job " << j.jobType << " : " << j.jobTypeNumber << " in CPU " << cpu_num + 1;
-    }
-    else if(j.arrivalTime == currentTime) {
-        cout << "\nTime " << currentTime << ":- Begin Processing Job : " << j.jobNumber << " Job " << j.jobType << " : " << j.jobTypeNumber << " in CPU " << cpu_num + 1;
-    }
-    else {
+void Processor::processJob(jobList j, int cpu_num, int currentTime, ofstream& logFile) {
+    if (j.processingTime != 0) {
         currentJob.processingTime--;
+        (*this).totalRunTime++;
     }
 }
 
 
 void Processor::remove()
 {
-    currentJob = {}; 
-    jobCount--;
-    //return jobs[front];
+    if (jobCount != 0) {
+        active = false;
+        currentJob = {};
+        (*this).runTime = 0;
+        jobCount--;
+    }
 }
 
-
-//
-//
-//jobList Processor::pop()
-//{
-//    jobList tempJob = currentJob;
-//    currentJob = {};
-//    jobCount--;
-//    cout << "popped off processor" << currentJob.jobType << currentJob.arrivalTime << currentJob.processingTime << endl;
-//
-//    return tempJob;
-//
-//}

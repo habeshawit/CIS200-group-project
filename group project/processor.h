@@ -1,8 +1,6 @@
 #pragma once
-//Processor.h
 #include "Queue.h"
 
-//int currentTime = 1;
 
 class Processor
 {
@@ -11,16 +9,16 @@ private:
     
 public:
     Processor() {};
-    void add(jobList inputJob, int cpu_num, int currentTime);
+    void add(jobList inputJob, int cpu_num, int currentTime, ofstream& logFile);
     void remove();
     bool isEmpty();
-    bool isFull();
     bool isComplete();
-    void processJob(jobList inputJob, int cpu_num, int currentTime);
+    void processJob(jobList inputJob, int cpu_num, int currentTime, ofstream& logFile);
+    int totalRunTime = 0;
     int idleTime = 0;
-    int runTime;
+    int runTime= 0;
+    bool active = false;
     jobList currentJob;
-    jobList peekJob() { return currentJob; }
-    //~Processor();
+
 };
 
